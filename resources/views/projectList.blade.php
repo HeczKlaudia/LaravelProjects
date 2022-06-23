@@ -21,80 +21,94 @@
 </head>
 
 <body>
-    <select class="form-select" aria-label="Default select example">
-        <option selected>-- Szűrés státusz szerint --</option>
-        <option value="1">One</option>
-    </select>
+    <div class="container">
 
-    <div class="table-responsive">
-        <h3>Projekt lista</h3>
+        <form class="d-flex" role="search" method="GET" action="{{ route('search') }}">
+            <input class="form-control me-2" name="search" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-primary" type="submit">Search</button>
+        </form>
 
-        @if (session('status'))
-        <div class="aler alert-success">{{ session('status') }}</div>
-        @endif
+        <div class="table-responsive">
+            <h3>Projekt lista</h3>
 
-        <a type="button" class="btn btn-outline-primary btn-sm" href="{{ url('/add-project') }}" data-bs-toggle="modal" data-bs-target="#ujProjektModal">Új projekt</a>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">név</th>
-                    <th scope="col">leírás</th>
-                    <th scope="col">státusz</th>
-                    <th scope="col">kapcsolattartók száma</th>
-                    <th scope="col">szerkesztés</th>
-                    <th scope="col">törlés</th>
-                </tr>
+            @if (session('status'))
+            <div class="aler alert-success">{{ session('status') }}</div>
+            @endif
 
-            </thead>
-            <tbody>
-                @foreach($projektek as $projekt)
-                <tr>
-                    <th scope="row">{{$projekt->id}}</th>
-                    <td>{{$projekt->nev}}</td>
-                    <td>{{$projekt->leiras}}</td>
-                    <td>{{$projekt->statusz}}</td>
-                    <td>
-                        {{$projekt->osszes}}
-                    </td>
-                    <td>
-                        <button type="button" value="{{$projekt->id}}" class="editbtn">Edit</button>
+            <a type="button" class="btn btn-outline-primary btn-sm" href="{{ url('/add-project') }}" data-bs-toggle="modal" data-bs-target="#ujProjektModal">Új projekt</a>
 
-                    </td>
-                    <td><a href="/delete/{{$projekt['id']}}">Delete</a></td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
+            @if($project_search->isNotEmpty())
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">név</th>
+                        <th scope="col">leírás</th>
+                        <th scope="col">státusz</th>
+                        <th scope="col">kapcsolattartók száma</th>
+                        <th scope="col">szerkesztés</th>
+                        <th scope="col">törlés</th>
+                    </tr>
 
-    @include('modal.szerkModal')
-    @include('modal.projectModal')
+                </thead>
+                <tbody>
+                    @foreach($project_search as $projekt)
+                    <tr>
+                        <th scope="row">{{$projekt->id}}</th>
+                        <td>{{$projekt->nev}}</td>
+                        <td>{{$projekt->leiras}}</td>
+                        <td>{{$projekt->statusz}}</td>
+                        <td>
+                            {{$projekt->osszes}}
+                        </td>
+                        <td>
+                            <button type="button" value="{{$projekt->id}}" class="editbtn">Edit</button>
 
-    <script>
-        $(document).ready(function() {
+                        </td>
+                        <td><a href="/delete/{{$projekt['id']}}">Delete</a></td>
+                    </tr>
+                    @endforeach
+                    @else
+                    <div>
+                        <h2>No posts found</h2>
+                    </div>
+                    @endif
+                </tbody>
+            </table>
+        </div>
+        
+        {{-- Pagination --}}
+        <div class="d-flex justify-content-center">
+            {!! $project_search->links() !!}
+        </div>
 
-            $(document).on('click', '.editbtn', function() {
+        @include('modal.szerkModal')
+        @include('modal.projectModal')
 
-                var projekt_id = $(this).val();
-                $("#szerkesztesModal").modal('show');
+    <!--     <script>
+            $(document).ready(function() {
 
-                $.ajax({
-                    type: "GET",
-                    url: "/projectEdit/" + projekt_id,
-                    success: function(response) {
-                        //  console.log(response);
-                        $('.nev').val(response.projekt.nev);
-                        $('.leiras').val(response.projekt.leiras);
-                        $('.statusz').val(response.projekt.statusz);
-                        $('.kapcsolat_id').val(response.projekt.kapcsolat_id);
-                    }
-                })
+                $(document).on('click', '.editbtn', function() {
+
+                    var projekt_id = $(this).val();
+                    $("#szerkesztesModal").modal('show');
+
+                    $.ajax({
+                        type: "GET",
+                        url: "/projectEdit/" + projekt_id,
+                        success: function(response) {
+                            //  console.log(response);
+                            $('.nev').val(response.projekt.nev);
+                            $('.leiras').val(response.projekt.leiras);
+                            $('.statusz').val(response.projekt.statusz);
+                            $('.kapcsolat_id').val(response.projekt.kapcsolat_id);
+                        }
+                    })
+                });
+
             });
-
-        });
-    </script>
-
+        </script> -->
+    </div>
 </body>
 
 </html>

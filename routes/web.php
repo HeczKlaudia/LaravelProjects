@@ -14,10 +14,11 @@ use App\Http\Controllers\ProjektController;
 |
 */
 
-Route::get('/', [ProjektController::class, 'index']);
+Route::get('/', [ProjektController::class, 'index'])->name('search');
 Route::get('/add-project', [ProjektController::class, 'create']);
-Route::get('/projectEdit/{id}', [ProjektController::class, 'edit']);
-Route::put('/projectEdit/{id}', [ProjektController::class, 'update']);
+Route::get('/edit-project/{id}', [ProjektController::class, 'edit']);
+Route::put('/edit-project/{id}', [ProjektController::class, 'update']);
 Route::get('/delete/{id}', [ProjektController::class, 'delete']);
 
 Route::post('/new_project', [ProjektController::class, 'newProject'])->name('new_project');
+//Route::get('/search', [ProjektController::class, 'search'])->name('search');

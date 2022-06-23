@@ -4,31 +4,39 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Projekt;
-use App\Models\Kapcsolattarto;
 use Illuminate\Support\Facades\DB;
 
 class ProjektController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
 
-        $kapcsolatok = DB::table('kapcsolattarto')->get();
-
         /* KAPCSOLATTARTÓK ÖSSZESÍTÉSE NEM MŰKÖDIK */
-        $projektek  = Projekt::select('projekt.id', 'projekt.nev', 'projekt.leiras', 'projekt.statusz')
+        /*  */
+
+        $search = $request->input('search');
+
+        $project_search = Projekt::query()
+            ->select('projekt.id', 'projekt.nev', 'projekt.leiras', 'projekt.statusz')
             ->addSelect(DB::raw('count(kapcsolattarto.id) as osszes'))
             ->leftJoin('kapcsolattarto', 'kapcsolattarto.id', '=', 'projekt.kapcsolat_id')
             ->groupBy('projekt.id', 'projekt.nev', 'projekt.leiras', 'projekt.statusz')
-            ->get();
+            ->where('projekt.statusz', 'LIKE', "%{$search}%")
+            ->orWhere('projekt.nev', 'LIKE', "%{$search}%")
+            ->Paginate(10);
 
-        // dd($projektek);
-        return view('projectList', compact('projektek', 'kapcsolatok'));
-    }
 
-    public function create()
-    {
+        $kapcsolatok = DB::table('kapcsolattarto')->get();
 
-        return view('projectList');
+        /*         $projektek  = Projekt::select('projekt.id', 'projekt.nev', 'projekt.leiras', 'projekt.statusz')
+            ->addSelect(DB::raw('count(kapcsolattarto.id) as osszes'))
+            ->leftJoin('kapcsolattarto', 'kapcsolattarto.id', '=', 'projekt.kapcsolat_id')
+            ->groupBy('projekt.id', 'projekt.nev', 'projekt.leiras', 'projekt.statusz')
+            ->cursorPaginate(10);
+ */
+        //     dd($projektek);
+        return view('projectList', compact('kapcsolatok', 'project_search'));
     }
 
     public function newProject(Request $req)
@@ -72,4 +80,5 @@ class ProjektController extends Controller
         $data->delete();
         return redirect()->back();
     }
+
 }

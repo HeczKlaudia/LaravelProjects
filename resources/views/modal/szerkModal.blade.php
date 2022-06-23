@@ -7,7 +7,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ url('projectEdit') }}" method="POST">
+                <form action="{{ url('/edit-project/'.$projekt->id) }}" method="POST">
                     @method('PUT')
                     @csrf
                     <input type="hidden" name="projekt_id" id="projekt_id">
