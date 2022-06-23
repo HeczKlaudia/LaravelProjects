@@ -11,12 +11,18 @@ class ProjektController extends Controller
 {
     public function index()
     {
-        $projektek  = Projekt::select('projekt.nev', 'projekt.leiras', 'projekt.statusz', DB::raw('count(kapcsolattarto.id) as osszes'))
+
+        $kapcsolatok = DB::table('kapcsolattarto')->get();
+
+        /* KAPCSOLATTARTÓK ÖSSZESÍTÉSE NEM MŰKÖDIK */
+        $projektek  = Projekt::select('projekt.id', 'projekt.nev', 'projekt.leiras', 'projekt.statusz')
+            ->addSelect(DB::raw('count(kapcsolattarto.id) as osszes'))
             ->leftJoin('kapcsolattarto', 'kapcsolattarto.id', '=', 'projekt.kapcsolat_id')
-            ->groupBy('projekt.nev', 'projekt.leiras', 'projekt.statusz')
+            ->groupBy('projekt.id', 'projekt.nev', 'projekt.leiras', 'projekt.statusz')
             ->get();
+
         // dd($projektek);
-        return view('projectList', compact('projektek'));
+        return view('projectList', compact('projektek', 'kapcsolatok'));
     }
 
     public function create()
@@ -25,25 +31,39 @@ class ProjektController extends Controller
         return view('projectList');
     }
 
+    public function newProject(Request $req)
+    {
+        $projekt = new Projekt;
+
+        $projekt->nev = $req->input('nev');
+        $projekt->leiras = $req->input('leiras');
+        $projekt->statusz = $req->input('statusz');
+        $projekt->kapcsolat_id = $req->input('kapcsolatok');
+        // dd($projekt);
+        $projekt->save();
+        return redirect()->back();
+    }
+
     public function edit($id)
     {
         $projekt = Projekt::find($id);
-      //  dd($projekt);
-        return view('projectEdit', compact('projekt'));
+        //  dd($projekt);
+        return response()->json([
+            'status' => 200,
+            'projekt' => $projekt,
+        ]);
     }
 
-    public function update(Request $req, $id)
+    public function update(Request $req)
     {
-        
-        $data = Projekt::find($id);
-        $input = $req->all();
-        $data->nev = $input['alvazSzam'];
-        $data->leiras = $input['telephely'];
-        $data->statusz = $input['napiAr'];
-        $data->kapcsolat_id = $input['szin'];
-        $data->save();
-
-        return redirect('/adminAutok');
+        $projekt_id = $req->input('projekt_id');
+        $projekt = Projekt::find($projekt_id);
+        $projekt->nev = $req->input('nev');
+        $projekt->leiras = $req->input('leiras');
+        $projekt->statusz = $req->input('statusz');
+        $projekt->kapcsolat_id = $req->input('kapcsolat_id');
+        $projekt->save();
+        return redirect()->back('status', 'Projekt módosítva!');
     }
 
     public function delete($id)

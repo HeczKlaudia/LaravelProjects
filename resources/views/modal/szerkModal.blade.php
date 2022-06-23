@@ -7,50 +7,48 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{url('/edit/'.$projects->id)}}" method="POST">
+                <form action="{{ url('projectEdit') }}" method="POST">
                     @method('PUT')
                     @csrf
+                    <input type="hidden" name="projekt_id" id="projekt_id">
+
                     <div class="form-header">
                         <h3>Adatok módosítása</h3>
                     </div>
 
                     <div class="sor">
                         <div class="inputfield">
-                            <label for="alvazSzam">Alvázszám:</label>
+                            <label for="nev">Név:</label>
                             <br />
-                            <input type="text" name="alvazSzam" class="alvazSzam" value="{{ old('alvazSzam') ?? $projects->alvazSzam }}" />
-
+                            <input type="text" name="nev" class="nev" />
                         </div>
 
                         <div class="inputfield">
-                            <label for="statusz">Státusz:</label> <br />
-                            <input type="text" name="statusz" class="statusz" value="{{ old('statusz') ?? $projects->statusz }}">
+                            <label for="leiras">Leírás:</label>
+                            <br />
+                            <input type="text" name="leiras" class="leiras" /><br />
                         </div>
                     </div>
 
                     <div class="sor">
                         <div class="inputfield">
-                            <label for="telephely">Telephely (1-Budapest, 2-Székesfehérvár):</label>
-
+                            <label for="statusz">Státusz:</label>
                             <br />
-                            <input type="text" name="telephely" class="telephely" value="{{ old('telephely') ?? $projects->telephely }}" /><br />
+                            <input type="text" name="statusz" class="statusz">
                         </div>
 
                         <div class="inputfield">
-                            <label for="napiAr">Napi ár:</label> <br />
-                            <input type="text" class="napiAr" name="napiAr" value="{{ old('napiAr') ?? $projects->napiAr }}" />
+                            <label for="kapcsolat_id">Kapcsolatok:</label>
+                            <br />
+                            <input type="text" class="kapcsolat_id" name="kapcsolat_id" />
                         </div>
                     </div>
-
-                    <input type="submit" value="Adatok mentése" id="adatotMent" />
-
-                </form>
-
             </div>
             <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Mentés</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Bezárás</button>
-                <button type="button" class="btn btn-primary">Mentés</button>
             </div>
+            </form>
         </div>
     </div>
 </div>

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('nev');
             $table->string('leiras');
             $table->string('statusz');
-            $table->integer('kapcsolat_id');
+            $table->integer('kapcsolat_id')->nullable();
             $table->timestamps();
         });
     }

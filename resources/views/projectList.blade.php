@@ -2,6 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     <!-- JavaScript Bundle with Popper -->
@@ -27,6 +28,11 @@
 
     <div class="table-responsive">
         <h3>Projekt lista</h3>
+
+        @if (session('status'))
+        <div class="aler alert-success">{{ session('status') }}</div>
+        @endif
+
         <a type="button" class="btn btn-outline-primary btn-sm" href="{{ url('/add-project') }}" data-bs-toggle="modal" data-bs-target="#ujProjektModal">Új projekt</a>
         <table class="table table-striped">
             <thead>
@@ -52,7 +58,8 @@
                         {{$projekt->osszes}}
                     </td>
                     <td>
-                        <button href="{{url('/projectEdit/'.$projekt->id)}}" class="btn btn-primary">Szerkesztés</button>
+                        <button type="button" value="{{$projekt->id}}" class="editbtn">Edit</button>
+
                     </td>
                     <td><a href="/delete/{{$projekt['id']}}">Delete</a></td>
                 </tr>
@@ -61,7 +68,32 @@
         </table>
     </div>
 
+    @include('modal.szerkModal')
+    @include('modal.projectModal')
 
+    <script>
+        $(document).ready(function() {
+
+            $(document).on('click', '.editbtn', function() {
+
+                var projekt_id = $(this).val();
+                $("#szerkesztesModal").modal('show');
+
+                $.ajax({
+                    type: "GET",
+                    url: "/projectEdit/" + projekt_id,
+                    success: function(response) {
+                        //  console.log(response);
+                        $('.nev').val(response.projekt.nev);
+                        $('.leiras').val(response.projekt.leiras);
+                        $('.statusz').val(response.projekt.statusz);
+                        $('.kapcsolat_id').val(response.projekt.kapcsolat_id);
+                    }
+                })
+            });
+
+        });
+    </script>
 
 </body>
 
