@@ -12,8 +12,7 @@ class ProjektController extends Controller
     public function index(Request $request)
     {
 
-        /* KAPCSOLATTARTÓK ÖSSZESÍTÉSE NEM MŰKÖDIK */
-        /*  */
+        /* hiányzó feladat: kapcsolattartók összesítése projektekkel */
 
         $search = $request->input('search');
 
@@ -29,12 +28,6 @@ class ProjektController extends Controller
 
         $kapcsolatok = DB::table('kapcsolattarto')->get();
 
-        /*         $projektek  = Projekt::select('projekt.id', 'projekt.nev', 'projekt.leiras', 'projekt.statusz')
-            ->addSelect(DB::raw('count(kapcsolattarto.id) as osszes'))
-            ->leftJoin('kapcsolattarto', 'kapcsolattarto.id', '=', 'projekt.kapcsolat_id')
-            ->groupBy('projekt.id', 'projekt.nev', 'projekt.leiras', 'projekt.statusz')
-            ->cursorPaginate(10);
- */
         //     dd($projektek);
         return view('projectList', compact('kapcsolatok', 'project_search'));
     }
@@ -42,36 +35,36 @@ class ProjektController extends Controller
     public function newProject(Request $req)
     {
         $projekt = new Projekt;
-
         $projekt->nev = $req->input('nev');
         $projekt->leiras = $req->input('leiras');
         $projekt->statusz = $req->input('statusz');
         $projekt->kapcsolat_id = $req->input('kapcsolatok');
-        // dd($projekt);
         $projekt->save();
         return redirect()->back();
+
+        /* hiányzó feladat: validálás, ha nem választ ki státuszt */
     }
 
     public function edit($id)
     {
+        $kapcsolatok = DB::table('kapcsolattarto')->get();
         $projekt = Projekt::find($id);
-        //  dd($projekt);
-        return response()->json([
-            'status' => 200,
-            'projekt' => $projekt,
-        ]);
+        return view('editPoject', compact('projekt', 'kapcsolatok'));
     }
 
-    public function update(Request $req)
+    public function update(Request $req, $id)
     {
-        $projekt_id = $req->input('projekt_id');
-        $projekt = Projekt::find($projekt_id);
+        $projekt = Projekt::find($id);
         $projekt->nev = $req->input('nev');
         $projekt->leiras = $req->input('leiras');
         $projekt->statusz = $req->input('statusz');
         $projekt->kapcsolat_id = $req->input('kapcsolat_id');
         $projekt->save();
-        return redirect()->back('status', 'Projekt módosítva!');
+        return redirect()->back();
+
+        /* hiányzó feladat: validáció, ha egy mező üres */
+
+        /* modal-lal nem működik */
     }
 
     public function delete($id)
@@ -80,5 +73,4 @@ class ProjektController extends Controller
         $data->delete();
         return redirect()->back();
     }
-
 }

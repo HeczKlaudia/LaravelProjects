@@ -31,10 +31,6 @@
         <div class="table-responsive">
             <h3>Projekt lista</h3>
 
-            @if (session('status'))
-            <div class="aler alert-success">{{ session('status') }}</div>
-            @endif
-
             <a type="button" class="btn btn-outline-primary btn-sm" href="{{ url('/add-project') }}" data-bs-toggle="modal" data-bs-target="#ujProjektModal">Új projekt</a>
 
             @if($project_search->isNotEmpty())
@@ -62,8 +58,7 @@
                             {{$projekt->osszes}}
                         </td>
                         <td>
-                            <button type="button" value="{{$projekt->id}}" class="editbtn">Edit</button>
-
+                            <a type="button" href="{{ url('/editPoject/'.$projekt->id) }}" class="editbtn">Edit</a>
                         </td>
                         <td><a href="/delete/{{$projekt['id']}}">Delete</a></td>
                     </tr>
@@ -76,38 +71,15 @@
                 </tbody>
             </table>
         </div>
-        
+
         {{-- Pagination --}}
         <div class="d-flex justify-content-center">
             {!! $project_search->links() !!}
         </div>
 
-        @include('modal.szerkModal')
+
         @include('modal.projectModal')
 
-    <!--     <script>
-            $(document).ready(function() {
-
-                $(document).on('click', '.editbtn', function() {
-
-                    var projekt_id = $(this).val();
-                    $("#szerkesztesModal").modal('show');
-
-                    $.ajax({
-                        type: "GET",
-                        url: "/projectEdit/" + projekt_id,
-                        success: function(response) {
-                            //  console.log(response);
-                            $('.nev').val(response.projekt.nev);
-                            $('.leiras').val(response.projekt.leiras);
-                            $('.statusz').val(response.projekt.statusz);
-                            $('.kapcsolat_id').val(response.projekt.kapcsolat_id);
-                        }
-                    })
-                });
-
-            });
-        </script> -->
     </div>
 </body>
 
