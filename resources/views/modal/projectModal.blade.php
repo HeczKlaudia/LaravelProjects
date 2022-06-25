@@ -19,7 +19,7 @@
                     </div>
                     <br>
                     <div class="row g-3">
-                    <div class="col">
+                        <div class="col">
                             <select select class="form-select" aria-label="Default select example" name="statusz">
                                 <option name="statusz">-- Státusz --</option>
                                 <option name="statusz">folyamatban</option>

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Kapcsolattarto;
 use Illuminate\Http\Request;
 use App\Models\Projekt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 class ProjektController extends Controller
 {
@@ -12,19 +14,18 @@ class ProjektController extends Controller
     public function index(Request $request)
     {
 
-        /* hiányzó feladat: kapcsolattartók összesítése projektekkel */
-
         $search = $request->input('search');
 
-        $project_search = Projekt::query()
-            ->select('projekt.id', 'projekt.nev', 'projekt.leiras', 'projekt.statusz')
-            ->addSelect(DB::raw('count(kapcsolattarto.id) as osszes'))
+        DB::statement("SET SQL_MODE=''");
+
+        $project_search = DB::table('Projekt')
+            ->select('projekt.id', 'projekt.nev', 'projekt.leiras', 'projekt.statusz', DB::raw('count(kapcsolattarto.id) as osszes'))
             ->leftJoin('kapcsolattarto', 'kapcsolattarto.id', '=', 'projekt.kapcsolat_id')
-            ->groupBy('projekt.id', 'projekt.nev', 'projekt.leiras', 'projekt.statusz')
+            ->groupBy('projekt.nev')
+            ->orderBy('projekt.nev', 'ASC')
             ->where('projekt.statusz', 'LIKE', "%{$search}%")
             ->orWhere('projekt.nev', 'LIKE', "%{$search}%")
             ->Paginate(10);
-
 
         $kapcsolatok = DB::table('kapcsolattarto')->get();
 
@@ -45,11 +46,44 @@ class ProjektController extends Controller
         /* hiányzó feladat: validálás, ha nem választ ki státuszt */
     }
 
+    public function addKapcsolat(Request $req, $id)
+    {
+        $addKapcsolat = Projekt::find($id);
+        //  dd($req);
+        $projekt = new Projekt;
+        $projekt->nev = $addKapcsolat->nev;
+        $projekt->leiras = $addKapcsolat->leiras;
+        $projekt->statusz = $addKapcsolat->statusz;
+        $projekt->kapcsolat_id = $req->kapcsolatok;
+        $projekt->save();
+
+        return redirect()->back();
+    }
+
+    public function ujKapcsolat(Request $req)
+    {
+        $uj_kapcsolat = new Kapcsolattarto();
+        $uj_kapcsolat->nev = $req->input('nev');
+        $uj_kapcsolat->email = $req->input('email');
+        $uj_kapcsolat->save();
+        return redirect()->back();
+    }
+
     public function edit($id)
     {
-        $kapcsolatok = DB::table('kapcsolattarto')->get();
         $projekt = Projekt::find($id);
-        return view('editPoject', compact('projekt', 'kapcsolatok'));
+
+        $addKapcsolat = DB::table('Kapcsolattarto')
+            ->select('*')
+            ->get();
+
+        $projekt_kapcs = DB::table('Projekt')
+            ->select('kapcsolattarto.nev', 'kapcsolattarto.id')
+            ->leftJoin('kapcsolattarto', 'kapcsolattarto.id', '=', 'projekt.kapcsolat_id')
+            ->where('projekt.nev', '=', $projekt->nev)
+            ->get();
+
+        return view('editPoject', compact('projekt', 'projekt_kapcs', 'addKapcsolat'));
     }
 
     public function update(Request $req, $id)
@@ -65,6 +99,15 @@ class ProjektController extends Controller
         /* hiányzó feladat: validáció, ha egy mező üres */
 
         /* modal-lal nem működik */
+    }
+
+    public function deleteKapcsolat($id)
+    {
+        $projekt = Projekt::select('*')
+            ->where('kapcsolat_id', '=', $id);
+        //  dd($projekt);
+        $projekt->delete();
+        return redirect()->back();
     }
 
     public function delete($id)

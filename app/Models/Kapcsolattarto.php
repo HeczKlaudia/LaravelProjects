@@ -9,6 +9,7 @@ class Kapcsolattarto extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id';
     protected $table = 'kapcsolattarto';
     protected $fillable = ['nev, email'];
 

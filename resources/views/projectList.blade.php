@@ -17,7 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 
     <!-- Styles -->
-
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
 </head>
 
 <body>
@@ -60,7 +60,9 @@
                         <td>
                             <a type="button" href="{{ url('/editPoject/'.$projekt->id) }}" class="editbtn">Edit</a>
                         </td>
-                        <td><a href="/delete/{{$projekt['id']}}">Delete</a></td>
+                        <td>
+                            <a href="{{ url('/delete/'.$projekt->id) }}" class="detelebtn">Delete</a>
+                        </td>
                     </tr>
                     @endforeach
                     @else
@@ -74,7 +76,7 @@
 
         {{-- Pagination --}}
         <div class="d-flex justify-content-center">
-            {!! $project_search->links() !!}
+            {!! $project_search->links("pagination::bootstrap-4") !!}
         </div>
 
 

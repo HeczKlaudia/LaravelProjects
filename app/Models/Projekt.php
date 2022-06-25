@@ -9,6 +9,7 @@ class Projekt extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'id';
     protected $table = 'projekt';
     protected $fillable = ['nev, leiras, statusz, kapcsolat_id'];
 
