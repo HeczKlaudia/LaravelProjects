@@ -33,7 +33,7 @@
                     <div class="form-header">
                         <h3>Adatok módosítása</h3>
                     </div>
-
+                    <br>
                     <div class="sor">
                         <div class="form-group">
                             <label for="nev">Név:</label>
@@ -52,7 +52,7 @@
                         <div class="form-group">
                             <br />
                             <label for="">Jelenlegi státusz:</label>
-                            <input type="text" value="{{ old('statusz') ?? $projekt->statusz }}">
+                            <input disabled="false" type="text" value="{{ old('statusz') ?? $projekt->statusz }}">
                             <br><br>
                             <select select class="form-select" aria-label="Default select example" name="statusz">
                                 <option name="statusz">-- Státusz --</option>
@@ -71,23 +71,25 @@
             </form>
         </div>
 
-        <div class="kapcsolatHozzaad">
-            <h1>Kapcsolatok</h1>
+        <div class="jelenlegiKapcsolatok">
+            <h3>Jelenlegi kapcsolatok</h3>
             <form action="{{ url('/editPoject/'.$projekt->id) }}" method="POST">
-
                 @csrf
                 <div class="form-group">
+                    <br>
                     <label for="kapcsolat_id">Kapcsolatok:</label>
                     <br />
                     <div class="row">
                         @foreach($projekt_kapcs as $kapcs)
-                        <div class="col">
-                            <input class="form-control" type="text" value="{{ old('kapcs->nev') ?? $kapcs->nev }}">
-                            <form action="{{ url('/deleteKapcsolat/'.$kapcs->id) }}"  method="POST">
+                        <div class="col-auto my-1">
+                            <input disabled="false" class="form-control" type="text" value="{{ old('kapcs->nev') ?? $kapcs->nev }}">
+                        </div>
+                        <div class="col-auto my-1">
+                            <form action="{{ url('/deleteKapcsolat/'.$kapcs->id) }}" method="POST">
                                 @csrf
                                 @method('delete')
                                 <button type="submit" class="btn bg-transparent">
-                                    <i class="fa fa-times">X</i>
+                                    <i class="fa fa-times" style="color: red;">X</i>
                                 </button>
                             </form>
                         </div>
@@ -98,34 +100,36 @@
             </form>
         </div>
 
-        <form action="{{ url('/add_kapcsolat/'.$projekt->id) }}" method="POST">
-            <div class="form-group">
-                @method('PUT')
-                @csrf
-                <input type="hidden" name="projekt_id" id="projekt_id">
-
-                <br>
-                <label for="">Kapcsolat hozzáadása:</label>
-                <select select class="form-select" aria-label="Default select example" name="kapcsolatok">
-                    <option value="">Kapcsolattartó</option>
-                    @foreach($addKapcsolat as $kapcs)
-                    <option value="{{$kapcs->id}}">{{$kapcs->nev}}</option>
-                    @endforeach
-                </select>
-                <br>
-                <button type="submit" class="btn btn-primary">Hozzáadás</button>
-
-                <br>
-                <br>
-            </div>
-        </form>
+        <div class="kapcsolatHozzaad">
+            <h3>Kapcsolatok hozzáadása</h3>
+            <form action="{{ url('/add_kapcsolat/'.$projekt->id) }}" method="POST">
+                <div class="form-group">
+                    @method('PUT')
+                    @csrf
+                    <input type="hidden" name="projekt_id" id="projekt_id">
+                    <br>
+                    <label for="">Kapcsolat hozzáadása:</label>
+                    <select select class="form-select" aria-label="Default select example" name="kapcsolatok">
+                        <option value="">Kapcsolattartó</option>
+                        @foreach($addKapcsolat as $kapcs)
+                        <option value="{{$kapcs->id}}">{{$kapcs->nev}}</option>
+                        @endforeach
+                    </select>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Hozzáadás</button>
+                    <br>
+                    <br>
+                </div>
+            </form>
+        </div>
 
         <div class="ujKapcsolat">
-            <h1>Új kapcsolattartó hozzáadása</h1>
+            <h3>Új kapcsolattartó létrehozása</h3>
             <form action="{{ route('uj_kapcsolat') }}" method="POST">
+                @csrf
                 <div class="form-group">
+                    <br>
                     <label for="">Új kapcsolattartó felvétele:</label>
-                    @csrf
                     <div class="row g-3">
                         <div class="col">
                             <input type="text" name="nev" class="form-control" placeholder="Kapcsolattartó neve" aria-label="Kapcsolattartó neve név">
@@ -140,9 +144,9 @@
                 </div>
 
                 <br>
-                <a href="{{ url('/') }}">Vissza a főoldalra</a>
             </form>
         </div>
+        <a href="{{ url('/') }}">Vissza a főoldalra</a>
 
     </div>
 </body>

@@ -16,7 +16,7 @@ table {
     text-align: center;
 }
 
-.adatokMod, .kapcsolatHozzaad, .ujKapcsolat {
+.adatokMod, .kapcsolatHozzaad, .ujKapcsolat, .jelenlegiKapcsolatok {
     border: 1px solid black;
     padding: 10px;
     margin-top: 10px;
