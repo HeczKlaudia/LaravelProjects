@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProjektController;
+use App\Mail\editMail;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,8 +22,12 @@ Route::put('/editPoject/{projekt}', [ProjektController::class, 'update']);
 Route::get('/delete/{id}', [ProjektController::class, 'delete']);
 
 Route::put('/add_kapcsolat/{addKapcsolat}', [ProjektController::class, 'addKapcsolat']);
-
-
 Route::delete('/deleteKapcsolat/{id}', [ProjektController::class, 'deleteKapcsolat']);
 Route::post('/new_project', [ProjektController::class, 'newProject'])->name('new_project');
 Route::post('/uj_kapcsolat', [ProjektController::class, 'ujKapcsolat'])->name('uj_kapcsolat');
+
+//Auth::routes();
+/* Route::get('/emails.editPoject/{projekt}', function() {
+    Mail::to('kicsihold21@gmail.com')->send(new editMail());
+    return new editMail();
+}); */

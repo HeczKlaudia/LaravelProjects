@@ -6,7 +6,9 @@ use App\Models\Kapcsolattarto;
 use Illuminate\Http\Request;
 use App\Models\Projekt;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Notification;
+use App\Notifications\EmailSendWhenEdit;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeMail;
 
 class ProjektController extends Controller
 {
@@ -88,12 +90,24 @@ class ProjektController extends Controller
 
     public function update(Request $req, $id)
     {
+
         $projekt = Projekt::find($id);
+
+        $data = [
+            'body' => 'Adatok módosítva',
+            'enrollmentText' => 'allowed',
+            'url' => url('/'),
+            'thankyou' => 'Thanks'
+        ];
+
         $projekt->nev = $req->input('nev');
         $projekt->leiras = $req->input('leiras');
         $projekt->statusz = $req->input('statusz');
         $projekt->kapcsolat_id = $req->input('kapcsolat_id');
         $projekt->save();
+        
+        $projekt->notify(new EmailSendWhenEdit($data));
+
         return redirect()->back();
 
         /* hiányzó feladat: validáció, ha egy mező üres */
